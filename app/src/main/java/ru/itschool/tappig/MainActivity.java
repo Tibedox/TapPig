@@ -1,5 +1,7 @@
 package ru.itschool.tappig;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -30,10 +32,22 @@ public class MainActivity extends AppCompatActivity {
         textTop = findViewById(R.id.textTop);
         textBottom = findViewById(R.id.textBottom);
         imgPig = findViewById(R.id.imagePig);
+        loadPigs();
+        updateTextBottom();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        savePigs();
     }
 
     public void tap(View view) {
         nTaps++;
+        updateTextBottom();
+    }
+
+    void updateTextBottom(){
         textBottom.setText("Cвинья потрогана "+nTaps+end());
     }
 
@@ -42,5 +56,17 @@ public class MainActivity extends AppCompatActivity {
             return " раза";
         }
         return " раз";
+    }
+
+    // Сохранение
+    public void savePigs() {
+        SharedPreferences prefs = getSharedPreferences("PiggyPrefs", Context.MODE_PRIVATE);
+        prefs.edit().putInt("num taps", nTaps).apply();
+    }
+
+    // Загрузка
+    public void loadPigs() {
+        SharedPreferences prefs = getSharedPreferences("PiggyPrefs", Context.MODE_PRIVATE);
+        nTaps = prefs.getInt("num taps", 0);
     }
 }
